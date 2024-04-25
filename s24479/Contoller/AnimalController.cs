@@ -11,59 +11,62 @@ namespace Animal.Controller
     [ApiController]
     [Route("api/[controller]")]
     public class AnimalController : ControllerBase
+
     {
-        private readonly IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
 
-        public AnimalController(IConfiguration configuration)
+    public AnimalController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    [HttpGet("animals")]
+    public IActionResult GetAnimals()
+    {
+        AnimalRepository animalRepository = new AnimalRepository();
+        var animals = animalRepository.GetAnimals();
+        return Ok(animals);
+    }
+
+    [HttpPost("animals")]
+    public IActionResult AddAnimal([FromBody] Animal newAnimal)
+    {
+        if (newAnimal == null)
         {
-            _configuration = configuration;
+            return BadRequest("Animal object is null");
         }
 
-        [HttpGet("animals")]
-        public IActionResult GetAnimals()
+        AnimalRepository animalRepository = new AnimalRepository();
+        animalRepository.AddAnimal(newAnimal);
+
+        return Ok("Animal added successfully");
+    }
+
+    [HttpPut("animals/{id}")]
+    public IActionResult UpdateAnimal(int id, [FromBody] Animal updatedAnimal)
+    {
+        if (updatedAnimal == null || id != updatedAnimal.Id)
         {
-            AnimalRepository animalRepository = new AnimalRepository();
-            var animals = animalRepository.GetAnimals();
-            return Ok(animals);
+            return BadRequest("Invalid request data");
         }
-        [HttpPost("animals")]
-        public IActionResult AddAnimal([FromBody] Animal newAnimal)
+
+        AnimalRepository animalRepository = new AnimalRepository();
+        var existingAnimal = animalRepository.GetAnimalById(id);
+
+        if (existingAnimal == null)
         {
-            if (newAnimal == null)
-            {
-                return BadRequest("Animal object is null");
-            }
-
-            AnimalRepository animalRepository = new AnimalRepository();
-            animalRepository.AddAnimal(newAnimal);
-
-            return Ok("Animal added successfully");
+            return NotFound("Animal not found");
         }
-        [HttpPut("animals/{id}")]
-        public IActionResult UpdateAnimal(int id, [FromBody] Animal updatedAnimal)
-        {
-            if (updatedAnimal == null || id != updatedAnimal.Id)
-            {
-                return BadRequest("Invalid request data");
-            }
 
-            AnimalRepository animalRepository = new AnimalRepository();
-            var existingAnimal = animalRepository.GetAnimalById(id);
+        existingAnimal.Name = updatedAnimal.Name;
+        existingAnimal.Category = updatedAnimal.Category;
+        existingAnimal.Description = updatedAnimal.Description;
+        existingAnimal.Area = updatedAnimal.Area;
 
-            if (existingAnimal == null)
-            {
-                return NotFound("Animal not found");
-            }
+        animalRepository.UpdateAnimal(existingAnimal);
 
-            existingAnimal.Name = updatedAnimal.Name;
-            existingAnimal.Category = updatedAnimal.Category;
-            existingAnimal.Description = updatedAnimal.Description;
-            existingAnimal.Area = updatedAnimal.Area;
-
-            animalRepository.UpdateAnimal(existingAnimal);
-
-            return Ok("Animal updated successfully");
-        }
+        return Ok("Animal updated successfully");
+    }
 
 
 

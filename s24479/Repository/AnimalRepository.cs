@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Animal.Controller{
-    public class AnimalRepository
+    public class AnimalRepository : IAnimalRepository
     {
         public List<Animal> GetAnimals()
         {
@@ -79,7 +79,6 @@ namespace Animal.Controller{
                 }
             }
         }
-        
         public Animal GetAnimalById(int id)
         {
             Animal animal = null;
@@ -113,7 +112,7 @@ namespace Animal.Controller{
 
             return animal;
         }
-
+        
 
 
     }

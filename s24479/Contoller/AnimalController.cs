@@ -42,16 +42,16 @@ namespace Animal.Controller
         return Ok("Animal added successfully");
     }
 
-    [HttpPut("animals/{id}")]
-    public IActionResult UpdateAnimal(int id, [FromBody] Animal updatedAnimal)
+    [HttpPut("animals/{idAnimal}")]
+    public IActionResult UpdateAnimal(int idAnimal, [FromBody] Animal updatedAnimal)
     {
-        if (updatedAnimal == null || id != updatedAnimal.Id)
+        if (updatedAnimal == null || idAnimal != updatedAnimal.Id)
         {
             return BadRequest("Invalid request data");
         }
 
         AnimalRepository animalRepository = new AnimalRepository();
-        var existingAnimal = animalRepository.GetAnimalById(id);
+        var existingAnimal = animalRepository.GetAnimalById(idAnimal);
 
         if (existingAnimal == null)
         {

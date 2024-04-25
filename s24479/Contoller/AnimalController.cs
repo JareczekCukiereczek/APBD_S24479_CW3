@@ -39,6 +39,32 @@ namespace Animal.Controller
 
             return Ok("Animal added successfully");
         }
+        [HttpPut("animals/{id}")]
+        public IActionResult UpdateAnimal(int id, [FromBody] Animal updatedAnimal)
+        {
+            if (updatedAnimal == null || id != updatedAnimal.Id)
+            {
+                return BadRequest("Invalid request data");
+            }
+
+            AnimalRepository animalRepository = new AnimalRepository();
+            var existingAnimal = animalRepository.GetAnimalById(id);
+
+            if (existingAnimal == null)
+            {
+                return NotFound("Animal not found");
+            }
+
+            existingAnimal.Name = updatedAnimal.Name;
+            existingAnimal.Category = updatedAnimal.Category;
+            existingAnimal.Description = updatedAnimal.Description;
+            existingAnimal.Area = updatedAnimal.Area;
+
+            animalRepository.UpdateAnimal(existingAnimal);
+
+            return Ok("Animal updated successfully");
+        }
+
 
 
 

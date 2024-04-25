@@ -60,6 +60,61 @@ namespace Animal.Controller{
                 }
             }
         }
+        public void UpdateAnimal(Animal updatedAnimal)
+        {
+            using (SqlConnection connection = new SqlConnection("Data Source=localhost,1433;Initial Catalog=master;User=SA;Password=Password12345;TrustServerCertificate=True"))
+            {
+                string query = "UPDATE Animal SET Name = @Name, Category = @Category, Description = @Description, Area = @Area WHERE IdAnimal = @Id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", updatedAnimal.Id);
+                    command.Parameters.AddWithValue("@Name", updatedAnimal.Name);
+                    command.Parameters.AddWithValue("@Category", updatedAnimal.Category);
+                    command.Parameters.AddWithValue("@Description", updatedAnimal.Description);
+                    command.Parameters.AddWithValue("@Area", updatedAnimal.Area);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        
+        public Animal GetAnimalById(int id)
+        {
+            Animal animal = null;
+
+            using (SqlConnection connection = new SqlConnection("Data Source=localhost,1433;Initial Catalog=master;User=SA;Password=Password12345;TrustServerCertificate=True"))
+            {
+                string query = "SELECT * FROM Animal WHERE IdAnimal = @Id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            animal = new Animal
+                            {
+                                Id = Convert.ToInt32(reader["IdAnimal"]),
+                                Name = reader["Name"].ToString(),
+                                Category = reader["Category"].ToString(),
+                                Description = reader["Description"].ToString(),
+                                Area = reader["Area"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+
+            return animal;
+        }
+
+
 
     }
 }

@@ -10,8 +10,7 @@ namespace Animal.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AnimalController : ControllerBase
-
+    public class AnimalController : ControllerBase 
     {
     private readonly IConfiguration _configuration;
     private readonly IAnimalRepository _animalRepository;
@@ -25,7 +24,6 @@ namespace Animal.Controller
     [HttpGet("animals")]
     public IActionResult GetAnimals(string orderBy = "Name")
     {
-        
         var animals = _animalRepository.GetAnimals(orderBy);
         return Ok(animals);
     }
@@ -33,25 +31,20 @@ namespace Animal.Controller
     [HttpPost("animals")]
     public IActionResult AddAnimal([FromBody] Animal newAnimal)
     {
-        if (newAnimal == null)
-        {
+        if (newAnimal == null) {
             return BadRequest("Animal object is null");
         }
         
         _animalRepository.AddAnimal(newAnimal);
-
         return Ok("Animal added successfully");
     }
 
     [HttpPut("animals/{idAnimal}")]
-    public IActionResult UpdateAnimal(int idAnimal, [FromBody] Animal updatedAnimal)
-    {
+    public IActionResult UpdateAnimal(int idAnimal, [FromBody] Animal updatedAnimal) {
         if (updatedAnimal == null || idAnimal != updatedAnimal.Id)
         {
             return BadRequest("Invalid request data");
         }
-
-        
         var existingAnimal = _animalRepository.GetAnimalById(idAnimal);
 
         if (existingAnimal == null)
@@ -68,26 +61,17 @@ namespace Animal.Controller
 
         return Ok("Animal updated successfully");
     }
+    
     [HttpDelete("animals/{idAnimal}")]
-    public IActionResult DeleteAnimal(int idAnimal)
-    {
+    public IActionResult DeleteAnimal(int idAnimal) {
         var existingAnimal = _animalRepository.GetAnimalById(idAnimal);
 
         if (existingAnimal == null)
         {
             return NotFound("Animal not found");
         }
-
         _animalRepository.DeleteAnimalById(idAnimal);
-
         return Ok("Animal deleted successfully");
     }
-
-        
-
-
-
-
-
     }
 }

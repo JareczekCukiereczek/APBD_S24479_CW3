@@ -14,8 +14,7 @@ namespace Animal.Controller{
         }
 
         private readonly IConfiguration _configuration;
-        public List<Animal> GetAnimals(string orderBy)
-        {
+        public List<Animal> GetAnimals(string orderBy){
             List<Animal> animals = new List<Animal>();
 
             string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
@@ -45,11 +44,9 @@ namespace Animal.Controller{
                     }
                 }
             }
-
             return animals;
         }
-        public void AddAnimal(Animal newAnimal)
-        {
+        public void AddAnimal(Animal newAnimal){
             string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -67,8 +64,7 @@ namespace Animal.Controller{
                 }
             }
         }
-        public void UpdateAnimal(Animal updatedAnimal)
-        {
+        public void UpdateAnimal(Animal updatedAnimal){
             string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -87,8 +83,7 @@ namespace Animal.Controller{
                 }
             }
         }
-        public Animal GetAnimalById(int id)
-        {
+        public Animal GetAnimalById(int id){
             Animal animal = null;
             
             string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
@@ -118,11 +113,9 @@ namespace Animal.Controller{
                     }
                 }
             }
-
             return animal;
         }
-        public void DeleteAnimalById(int id)
-        {
+        public void DeleteAnimalById(int id) {
             string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -137,10 +130,5 @@ namespace Animal.Controller{
                 }
             }
         }
-
-        
-        
-
-
     }
 }

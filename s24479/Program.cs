@@ -1,3 +1,5 @@
+using Animal.Controller;
+
 class Program
 {
     public static void Main(string[] args)
@@ -9,6 +11,7 @@ class Program
         builder.Services.AddEndpointsApiExplorer(); //bibiloteki automat generuja dok.do.api
         builder.Services.AddSwaggerGen(); //wizualna dokumentacja openAPI - dok.apk.webowych
         builder.Services.AddControllers();
+        builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();//nowy serwis rejestracja w konter IoC
 
         var app = builder.Build();
 

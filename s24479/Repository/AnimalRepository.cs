@@ -8,15 +8,21 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace Animal.Controller{
     public class AnimalRepository : IAnimalRepository
     {
-        public List<Animal> GetAnimals()
+        public AnimalRepository(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        private readonly IConfiguration _configuration;
+        public List<Animal> GetAnimals(string orderBy)
         {
             List<Animal> animals = new List<Animal>();
 
-            //string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
+            string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
 
-            using (SqlConnection connection = new SqlConnection("Data Source=localhost,1433;Initial Catalog=master;User=SA;Password=Password12345;TrustServerCertificate=True"))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT * FROM Animal";
+                string query = "SELECT * FROM Animal ORDER BY " +orderBy +" ASC";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -44,7 +50,8 @@ namespace Animal.Controller{
         }
         public void AddAnimal(Animal newAnimal)
         {
-            using (SqlConnection connection = new SqlConnection("Data Source=localhost,1433;Initial Catalog=master;User=SA;Password=Password12345;TrustServerCertificate=True"))
+            string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = "INSERT INTO Animal (Name, Category, Description, Area) VALUES (@Name, @Category, @Description, @Area)";
 
@@ -62,7 +69,8 @@ namespace Animal.Controller{
         }
         public void UpdateAnimal(Animal updatedAnimal)
         {
-            using (SqlConnection connection = new SqlConnection("Data Source=localhost,1433;Initial Catalog=master;User=SA;Password=Password12345;TrustServerCertificate=True"))
+            string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = "UPDATE Animal SET Name = @Name, Category = @Category, Description = @Description, Area = @Area WHERE IdAnimal = @Id";
 
@@ -82,8 +90,9 @@ namespace Animal.Controller{
         public Animal GetAnimalById(int id)
         {
             Animal animal = null;
-
-            using (SqlConnection connection = new SqlConnection("Data Source=localhost,1433;Initial Catalog=master;User=SA;Password=Password12345;TrustServerCertificate=True"))
+            
+            string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = "SELECT * FROM Animal WHERE IdAnimal = @Id";
 
@@ -112,6 +121,24 @@ namespace Animal.Controller{
 
             return animal;
         }
+        public void DeleteAnimalById(int id)
+        {
+            string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "DELETE FROM Animal WHERE IdAnimal = @Id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        
         
 
 

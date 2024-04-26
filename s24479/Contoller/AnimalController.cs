@@ -14,17 +14,19 @@ namespace Animal.Controller
 
     {
     private readonly IConfiguration _configuration;
+    private readonly IAnimalRepository _animalRepository;
 
-    public AnimalController(IConfiguration configuration)
+    public AnimalController(IConfiguration configuration,IAnimalRepository animalRepository)
     {
         _configuration = configuration;
+        _animalRepository = animalRepository;
     }
 
     [HttpGet("animals")]
-    public IActionResult GetAnimals()
+    public IActionResult GetAnimals(string orderBy = "Name")
     {
-        AnimalRepository animalRepository = new AnimalRepository();
-        var animals = animalRepository.GetAnimals();
+        
+        var animals = _animalRepository.GetAnimals(orderBy);
         return Ok(animals);
     }
 
@@ -35,9 +37,8 @@ namespace Animal.Controller
         {
             return BadRequest("Animal object is null");
         }
-
-        AnimalRepository animalRepository = new AnimalRepository();
-        animalRepository.AddAnimal(newAnimal);
+        
+        _animalRepository.AddAnimal(newAnimal);
 
         return Ok("Animal added successfully");
     }
@@ -50,8 +51,8 @@ namespace Animal.Controller
             return BadRequest("Invalid request data");
         }
 
-        AnimalRepository animalRepository = new AnimalRepository();
-        var existingAnimal = animalRepository.GetAnimalById(idAnimal);
+        
+        var existingAnimal = _animalRepository.GetAnimalById(idAnimal);
 
         if (existingAnimal == null)
         {
@@ -63,10 +64,26 @@ namespace Animal.Controller
         existingAnimal.Description = updatedAnimal.Description;
         existingAnimal.Area = updatedAnimal.Area;
 
-        animalRepository.UpdateAnimal(existingAnimal);
+        _animalRepository.UpdateAnimal(existingAnimal);
 
         return Ok("Animal updated successfully");
     }
+    [HttpDelete("animals/{idAnimal}")]
+    public IActionResult DeleteAnimal(int idAnimal)
+    {
+        var existingAnimal = _animalRepository.GetAnimalById(idAnimal);
+
+        if (existingAnimal == null)
+        {
+            return NotFound("Animal not found");
+        }
+
+        _animalRepository.DeleteAnimalById(idAnimal);
+
+        return Ok("Animal deleted successfully");
+    }
+
+        
 
 
 
